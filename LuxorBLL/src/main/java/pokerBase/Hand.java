@@ -36,11 +36,11 @@ public class Hand {
 		CardsInHand = cardsInHand;
 	}
 
-	public ArrayList<Card> getBestCardsInHand() {
+	private ArrayList<Card> getBestCardsInHand() {
 		return BestCardsInHand;
 	}
 
-	public void setBestCardsInHand(ArrayList<Card> bestCardsInHand) {
+	private void setBestCardsInHand(ArrayList<Card> bestCardsInHand) {
 		BestCardsInHand = bestCardsInHand;
 	}
 
@@ -48,7 +48,7 @@ public class Hand {
 		return HandScore;
 	}
 
-	public void setHandScore(HandScore handScore) {
+	private void setHandScore(HandScore handScore) {
 		HandScore = handScore;
 	}
 
@@ -56,11 +56,11 @@ public class Hand {
 		return bScored;
 	}
 
-	public void setbScored(boolean bScored) {
+	private void setbScored(boolean bScored) {
 		this.bScored = bScored;
 	}
 
-	public Hand AddCardToHand(Card c) {
+	private Hand AddCardToHand(Card c) {
 		CardsInHand.add(c);
 		return this;
 	}
