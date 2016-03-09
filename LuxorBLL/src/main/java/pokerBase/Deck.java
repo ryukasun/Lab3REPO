@@ -50,6 +50,8 @@ public class Deck {
 	{
 		this(NbrOfJokers);
 		
+		// Work to do!  Make the existing Deck cards Wild...  
+		
 	}
 	
 	
