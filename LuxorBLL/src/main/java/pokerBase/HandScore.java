@@ -6,7 +6,7 @@ public class HandScore {
 
 	private int HandStrength;
 	private int HiHand;
-	private int LoHand;
+	private int LoHand = 0;
 	private ArrayList<Card> Kickers = new ArrayList<Card>();
 	
 	public HandScore() {}
