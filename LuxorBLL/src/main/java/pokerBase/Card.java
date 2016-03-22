@@ -10,6 +10,7 @@ public class Card implements Comparable {
 	private eSuit eSuit;
 	private eRank eRank;
 	private int iCardNbr;
+	private boolean WildCard;
 	
 	public Card()
 	{
@@ -20,8 +21,24 @@ public class Card implements Comparable {
 		this.eSuit = eSuit;
 		this.eRank = eRank;
 		this.iCardNbr = iCardNbr;
+		this.WildCard = false;
 	}
+	public Card(pokerEnums.eSuit eSuit, pokerEnums.eRank eRank, int iCardNbr, boolean WildCard) {
+		super();
+		this.eSuit = eSuit;
+		this.eRank = eRank;
+		this.iCardNbr = iCardNbr;
+		this.WildCard = true;
+	}
+	
+	
 
+	public boolean isWildCard() {
+		return WildCard;
+	}
+	public void setWildCard(boolean WildCard) {
+		this.WildCard = WildCard;
+	}
 	public eSuit geteSuit() {
 		return eSuit;
 	}

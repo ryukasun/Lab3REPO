@@ -11,6 +11,7 @@ import java.util.Locale;
 
 import exceptions.DeckException;
 import exceptions.HandException;
+import java.util.UUID;
 import pokerEnums.*;
 
 import static java.lang.System.out;
@@ -20,12 +21,87 @@ public class Hand {
 
 	private ArrayList<Card> CardsInHand;
 	private ArrayList<Card> BestCardsInHand;
+	// private static ArrayList<Hand> explodedHand;
 	private HandScore HandScore;
 	private boolean bScored = false;
+	private boolean WildDeck = false;
 
 	public Hand() {
 		CardsInHand = new ArrayList<Card>();
 		BestCardsInHand = new ArrayList<Card>();
+	}
+
+	// private Hand(ArrayList) <Cards>){
+	//
+	// se
+	//
+	// }
+
+	private static ArrayList<Hand> explodeHand(Hand h, int cardPosition) {// potentially
+																			// code
+																			// here
+																			// to
+																			// deal
+																			// with
+																			// wilds
+		// Some pseudocode to be here later, what we want to do is when we get
+		// the first hand before evaluating it, if a card
+		// has the joker attribute, it will end up creating decks with those
+		// card changed. 5 WildCards will always be Five of a kind
+		// 4 wildcards will also be five of a kind. Main thing to consider is
+		// the situations with 3/2/1 wild cards. We also need to
+		// to check if there's a situation where flush can be present. If a
+		// flush isn't possible within the actual cards then we only
+		// need to iterate 13 times, basically the card at each possible rank.
+		/*
+		 * So again 1. Create some sort of static method which is given an array
+		 * of hands 2. This goes on to getting the cards in hand function for
+		 * the element of the array list of hands 3. Here is going to be some
+		 * sort of loop
+		 */
+		Deck jokerDeck = new Deck(); // this creates a new instance of deck,
+										// this will be used to create a deck
+										// with 52 different cards (suits/ranks)
+		ArrayList<Hand> explodedHand = new ArrayList<Hand>(); // This is done to
+																// create an
+																// arraylist of
+																// hand.
+		explodedHand.add(h);
+		int numWilds = 0;
+		for (int i = 0; i < h.getCardsInHand().size(); i++) {
+			if (h.getCardsInHand().get(i).geteRank() == eRank.JOKER) {
+				h.setWildDeck(true);// this is done to differentiate between
+									// natural hand
+				numWilds++;
+			}
+		}
+		int cardPos = 0;
+		for (Hand x : explodedHand) {
+			ArrayList<Card> c = h.getCardsInHand();
+			if (c.get(cardPos).geteRank() == eRank.JOKER) {
+				for (Card potential : jokerDeck.getDeckCards()) {
+					Hand holder = new Hand();
+					holder.AddCardToHand(potential);
+					for (int u = 0; u < 5; u++) {
+						if (cardPos != u) {
+							holder.add(x.getCardsInHand().get(u));
+						}
+					}
+				}
+
+			}
+
+		}
+
+		return explodedHand;
+	}
+	
+	private static ArrayList<Hand> subHand(){
+		
+	}
+
+	public void setWildDeck(boolean wildDeck) {
+		WildDeck = wildDeck;
 	}
 
 	public ArrayList<Card> getCardsInHand() {
@@ -221,6 +297,12 @@ public class Hand {
 		}
 
 		return isRoyalFlush;
+	}
+
+	public static boolean isHandWildRoyalFlush(Hand h, HandScore hs) {
+
+		return true;
+
 	}
 
 	public static boolean isHandStraightFlush(Hand h, HandScore hs) {

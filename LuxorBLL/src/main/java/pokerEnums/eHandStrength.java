@@ -13,6 +13,11 @@ public enum eHandStrength {
 			return "Royal Flush";
 		}
 	},
+	WildRoyalFlush(99, "isHandWildRoyalFlush") {
+		public String toString() {
+			return "WildRoyalFlush";
+		}
+	},
 	StraightFlush(90, "isHandStraightFlush") {
 		public String toString() {
 			return "Straight Flush";

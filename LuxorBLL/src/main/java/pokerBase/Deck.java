@@ -22,7 +22,7 @@ public class Deck {
 	/**
 	 * No arg constructor for deck, will return shuffled deck of 52 cards
 	 */
-	public Deck()
+	public Deck()//makes a regular deck
 	{
 		int iCardNbr = 1;
 		for (eSuit eSuit : eSuit.values()) {
@@ -34,7 +34,7 @@ public class Deck {
 		Collections.shuffle(deckCards);
 	}
 	
-	public Deck(int iNbrOfJokers)
+	public Deck(int iNbrOfJokers)//makes a deck with the number of jokers being added
 	{
 		this();
 		
@@ -46,10 +46,21 @@ public class Deck {
 	}
 	
 	
-	public Deck (int NbrOfJokers, ArrayList<Card> wilds)
+	public Deck (int NbrOfJokers, ArrayList<Card> wilds)//makes a deck with wilds
 	{
-		this(NbrOfJokers);
+		this(NbrOfJokers);//creates the deck first with the jokers
+		for (Card cards : deckCards) {
+			for (Card WildCard : wilds) {
+				if ((cards.geteSuit() == WildCard.geteSuit()) && (cards.geteRank() == WildCard.geteRank())) {
+					cards.setWildCard(true);
+					int CardNum = cards.getiCardNbr();
+					cards = new Card(eSuit.JOKER,eRank.JOKER,CardNum,true);
+				}
+			}
+		}
+		Collections.shuffle(deckCards);
 		
+		//Figure out a way to denote that a card is 
 		// Work to do!  Make the existing Deck cards Wild...  
 		
 	}
@@ -80,4 +91,10 @@ public class Deck {
 	{
 		return deckCards.size();	
 	}
+
+	public ArrayList<Card> getDeckCards() {
+		return deckCards;
+	}
+	
 }
+
