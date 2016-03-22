@@ -31,19 +31,27 @@ public class Hand {
 		BestCardsInHand = new ArrayList<Card>();
 	}
 
-	// private Hand(ArrayList) <Cards>){
+	 private Hand(ArrayList <Card> Cards){
+		 ArrayList<Card> wildsHand = new ArrayList<Card>();
+		 for(Card c: Cards){
+			 wildsHand.add(new Card(c.geteSuit(),c.geteRank(),c.getiCardNbr(),c.isWildCard()));
+			 
+		 }
+		 this.setCardsInHand(wildsHand);
+	 }
+	
 	//
 	// se
 	//
 	// }
 
-	private static ArrayList<Hand> explodeHand(Hand h, int cardPosition) {// potentially
-																			// code
-																			// here
-																			// to
-																			// deal
-																			// with
-																			// wilds
+	private static ArrayList<Hand> explodeHand(Hand h) {// potentially
+		// code
+		// here
+		// to
+		// deal
+		// with
+		// wilds
 		// Some pseudocode to be here later, what we want to do is when we get
 		// the first hand before evaluating it, if a card
 		// has the joker attribute, it will end up creating decks with those
@@ -60,48 +68,91 @@ public class Hand {
 		 * sort of loop
 		 */
 		Deck jokerDeck = new Deck(); // this creates a new instance of deck,
-										// this will be used to create a deck
-										// with 52 different cards (suits/ranks)
+		// this will be used to create a deck
+		// with 52 different cards (suits/ranks)
 		ArrayList<Hand> explodedHand = new ArrayList<Hand>(); // This is done to
-																// create an
-																// arraylist of
-																// hand.
-		explodedHand.add(h);
-		int numWilds = 0;
-		for (int i = 0; i < h.getCardsInHand().size(); i++) {
-			if (h.getCardsInHand().get(i).geteRank() == eRank.JOKER) {
+		// create an
+		// arraylist of
+		// hand.
+		explodedHand.add(h);// initializes the
+
+		int numWilds = 0;// just a counter for number of wilds, can be at
+							// highest 5, lowest 0
+		for (int i = 0; i < h.getCardsInHand().size(); i++) {// initializing a
+																// loop
+			if (h.getCardsInHand().get(i).geteRank() == eRank.JOKER) { // if a
+																		// card
+																		// has
+																		// the
+																		// erank
+																		// of
+																		// joker
 				h.setWildDeck(true);// this is done to differentiate between
-									// natural hand
-				numWilds++;
+				// natural hand
+				numWilds++;// this is done if there's a situation where we need
 			}
 		}
-		int cardPos = 0;
-		for (Hand x : explodedHand) {
-			ArrayList<Card> c = h.getCardsInHand();
-			if (c.get(cardPos).geteRank() == eRank.JOKER) {
-				for (Card potential : jokerDeck.getDeckCards()) {
-					Hand holder = new Hand();
-					holder.AddCardToHand(potential);
-					for (int u = 0; u < 5; u++) {
-						if (cardPos != u) {
-							holder.add(x.getCardsInHand().get(u));
+		for (int j = 0; j < h.getCardsInHand().size(); j++) {
+			explodedHand = subHand(explodedHand,j);
+		}
+	
+
+	// int cardPos = 0; // done just for testing reasons for now
+	// for (Hand x : explodedHand) {//WE CANNOT ADD
+	// ArrayList<Card> c = h.getCardsInHand();
+	// if (c.get(cardPos).geteRank() == eRank.JOKER) {
+	// for (Card potential : jokerDeck.getDeckCards()) {
+	// Hand holder = new Hand();
+	// holder.AddCardToHand(potential);
+	// for (int u = 0; u < 5; u++) {
+	// if (cardPos != u) {
+	// holder.add(x.getCardsInHand().get(u));
+	// }
+	// }
+	// }
+	//
+	// }
+	//
+	// }
+
+	return explodedHand;
+
+	}
+
+	private static ArrayList<Hand> subHand(ArrayList<Hand> theHand,int subbedCard){
+		Deck jokerDeck2 = new Deck();
+		ArrayList<Hand> PosHand = new ArrayList<Hand>();//initialze the arraylist
+		for(Hand h: theHand){
+			ArrayList<Card> holder = h.getCardsInHand();
+			if(holder.get(subbedCard).geteRank()==eRank.JOKER){
+				for(Card subCard:jokerDeck2.getDeckCards()){
+					ArrayList<Card> jokerHands = new ArrayList<Card>();
+					jokerHands.add(subCard); //If code is working correctly, will iterate through deck
+					for(int k = 0; k < 5; k++){
+						if(subbedCard != k){
+							jokerHands.add(h.getCardsInHand().get(k));
 						}
 					}
+					Hand subsHand = new Hand();
+					PosHand.add(subsHand);
 				}
-
 			}
-
+			else{
+				PosHand.add(h); //default case, no wilds
+			}
 		}
-
-		return explodedHand;
-	}
-	
-	private static ArrayList<Hand> subHand(){
+		return PosHand;
 		
+		
+
 	}
 
-	public void setWildDeck(boolean wildDeck) {
+	public void setWildDeck(boolean wildDeck) {//setter
 		WildDeck = wildDeck;
+	}
+
+	public boolean isWildDeck() {//getter
+		return WildDeck;
 	}
 
 	public ArrayList<Card> getCardsInHand() {
@@ -201,6 +252,17 @@ public class Hand {
 		}
 		return h;
 	}
+	
+	private static Hand EvalHand(Hand h) throws HandException{
+		ArrayList<Hand> Evaluated = explodeHand(h);
+		
+		for(Hand EvalHand: Evaluated){
+			EvaluateHand(EvalHand);
+		}
+		Collections.sort(Evaluated, Hand.HandRank);
+		return Evaluated.get(0);
+		
+	}
 
 	private static boolean isHandFlush(ArrayList<Card> cards) {
 		int cnt = 0;
@@ -256,7 +318,8 @@ public class Hand {
 		return bIsStraight;
 	}
 
-	public static boolean isHandFiveOfAKind(Hand h, HandScore hs) {
+	public static boolean isHandFiveOfAKind(Hand h, HandScore hs) {// Five of a
+																	// kind code
 
 		int iCnt = 0;
 		boolean isFive = false;
@@ -282,12 +345,14 @@ public class Hand {
 		return isFive;
 	}
 
-	public static boolean isHandRoyalFlush(Hand h, HandScore hs) {
+	public static boolean isHandRoyalFlush(Hand h, HandScore hs) { // natural
+																	// roayl
+																	// flush
 
 		Card c = new Card();
 		boolean isRoyalFlush = false;
 		if ((isHandFlush(h.getCardsInHand())) && (isStraight(h.getCardsInHand(), c))) {
-			if (c.geteRank() == eRank.ACE) {
+			if (c.geteRank() == eRank.ACE && !(h.isWildDeck())) {
 				isRoyalFlush = true;
 				hs.setHandStrength(eHandStrength.RoyalFlush.getHandStrength());
 				hs.setHiHand(h.getCardsInHand().get(eCardNo.FirstCard.getCardNo()).geteRank().getiRankNbr());
@@ -300,8 +365,24 @@ public class Hand {
 	}
 
 	public static boolean isHandWildRoyalFlush(Hand h, HandScore hs) {
+		Card c = new Card();
+		boolean isWildRoyalFlush = false;
+		for(Card d: h.getCardsInHand()){
+			if(d.isWildCard()){
+				h.setWildDeck(true);
+			}
+		}
+		if ((isHandFlush(h.getCardsInHand())) && (isStraight(h.getCardsInHand(), c))) {
+			if (c.geteRank() == eRank.ACE && h.isWildDeck()) {
+				isWildRoyalFlush = true;
+				hs.setHandStrength(eHandStrength.WildRoyalFlush.getHandStrength());
+				hs.setHiHand(h.getCardsInHand().get(eCardNo.FirstCard.getCardNo()).geteRank().getiRankNbr());
+				hs.setLoHand(0);
+			}
 
-		return true;
+		}
+
+		return isWildRoyalFlush;
 
 	}
 
@@ -539,71 +620,24 @@ public class Hand {
 
 	public static Comparator<Hand> HandRank = new Comparator<Hand>() {
 
-		public int compare(Hand h1, Hand h2) {
+		public int compare(Hand h1,Hand h2){
 
-			int result = 0;
+	int result=0;
 
-			result = h2.getHandScore().getHandStrength() - h1.getHandScore().getHandStrength();
+	result=h2.getHandScore().getHandStrength()-h1.getHandScore().getHandStrength();
 
-			if (result != 0) {
-				return result;
-			}
+	if(result!=0){return result;}
 
-			result = h2.getHandScore().getHiHand() - h1.getHandScore().getHiHand();
-			if (result != 0) {
-				return result;
-			}
+	result=h2.getHandScore().getHiHand()-h1.getHandScore().getHiHand();if(result!=0){return result;}
 
-			result = h2.getHandScore().getLoHand() - h1.getHandScore().getLoHand();
-			if (result != 0) {
-				return result;
-			}
+	result=h2.getHandScore().getLoHand()-h1.getHandScore().getLoHand();if(result!=0){return result;}
 
-			if (h2.getHandScore().getKickers().size() > 0) {
-				if (h1.getHandScore().getKickers().size() > 0) {
-					result = h2.getHandScore().getKickers().get(eCardNo.FirstCard.getCardNo()).geteRank().getiRankNbr()
-							- h1.getHandScore().getKickers().get(eCardNo.FirstCard.getCardNo()).geteRank()
-									.getiRankNbr();
-				}
-				if (result != 0) {
-					return result;
-				}
-			}
+	if(h2.getHandScore().getKickers().size()>0){if(h1.getHandScore().getKickers().size()>0){result=h2.getHandScore().getKickers().get(eCardNo.FirstCard.getCardNo()).geteRank().getiRankNbr()-h1.getHandScore().getKickers().get(eCardNo.FirstCard.getCardNo()).geteRank().getiRankNbr();}if(result!=0){return result;}}
 
-			if (h2.getHandScore().getKickers().size() > 1) {
-				if (h1.getHandScore().getKickers().size() > 1) {
-					result = h2.getHandScore().getKickers().get(eCardNo.SecondCard.getCardNo()).geteRank().getiRankNbr()
-							- h1.getHandScore().getKickers().get(eCardNo.SecondCard.getCardNo()).geteRank()
-									.getiRankNbr();
-				}
-				if (result != 0) {
-					return result;
-				}
-			}
+	if(h2.getHandScore().getKickers().size()>1){if(h1.getHandScore().getKickers().size()>1){result=h2.getHandScore().getKickers().get(eCardNo.SecondCard.getCardNo()).geteRank().getiRankNbr()-h1.getHandScore().getKickers().get(eCardNo.SecondCard.getCardNo()).geteRank().getiRankNbr();}if(result!=0){return result;}}
 
-			if (h2.getHandScore().getKickers().size() > 2) {
-				if (h1.getHandScore().getKickers().size() > 2) {
-					result = h2.getHandScore().getKickers().get(eCardNo.ThirdCard.getCardNo()).geteRank().getiRankNbr()
-							- h1.getHandScore().getKickers().get(eCardNo.ThirdCard.getCardNo()).geteRank()
-									.getiRankNbr();
-				}
-				if (result != 0) {
-					return result;
-				}
-			}
+	if(h2.getHandScore().getKickers().size()>2){if(h1.getHandScore().getKickers().size()>2){result=h2.getHandScore().getKickers().get(eCardNo.ThirdCard.getCardNo()).geteRank().getiRankNbr()-h1.getHandScore().getKickers().get(eCardNo.ThirdCard.getCardNo()).geteRank().getiRankNbr();}if(result!=0){return result;}}
 
-			if (h2.getHandScore().getKickers().size() > 3) {
-				if (h1.getHandScore().getKickers().size() > 3) {
-					result = h2.getHandScore().getKickers().get(eCardNo.FourthCard.getCardNo()).geteRank().getiRankNbr()
-							- h1.getHandScore().getKickers().get(eCardNo.FourthCard.getCardNo()).geteRank()
-									.getiRankNbr();
-				}
-				if (result != 0) {
-					return result;
-				}
-			}
-			return 0;
-		}
-	};
+	if(h2.getHandScore().getKickers().size()>3){if(h1.getHandScore().getKickers().size()>3){result=h2.getHandScore().getKickers().get(eCardNo.FourthCard.getCardNo()).geteRank().getiRankNbr()-h1.getHandScore().getKickers().get(eCardNo.FourthCard.getCardNo()).geteRank().getiRankNbr();}if(result!=0){return result;}}return 0;}};
 
 }
